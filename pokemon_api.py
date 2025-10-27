@@ -18,6 +18,7 @@ def get_pokemon_data(pokemon_identifier):
         return pokemon
     else:
         print(f"Error fetching data for pokemon {pokemon_identifier}")
+        return None
 
 
 

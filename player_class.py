@@ -11,7 +11,7 @@ class Player:
         """Add a Pokemon to the collection (max 6 Pokemon)"""
         if len(self.collection) < 6:
             self.collection.append(pokemon)
-            print(f"{pokemon.name} added to {self.name}'s collection!")
+            print(f"\n{pokemon.name} added to {self.name}'s collection!")
             return True
         else:
             print(f"Collection is full! Can't add {pokemon.name}")
@@ -19,10 +19,14 @@ class Player:
     
     def remove_pokemon(self, index):
         """Remove a Pokemon from the collection by index"""
-        if index >= 0 and index <= 5: # 1. Check if the index is valid (between 0 and 5, and less than collection size)
+        if not self.collection:
+            print("You have no Pokemon to remove.")
+            return None
+        
+        if 0 <= index < len(self.collection): # 1. Check if the index is valid (between 0 and 5, and less than collection size)
             removed = self.collection.pop(index) # 2. If valid, remove the Pokemon at that index using pop()
             print(f"\n{removed.name} released successfully") # 3. Print a message about releasing the Pokemon
-                                                             # 4. Return the removed Pokemon
+            return removed                                   # 4. Return the removed Pokemon
         else:
             print("Invalid selection")
             return None # 5. If invalid index, return None
@@ -30,12 +34,12 @@ class Player:
     def show_collection(self):
         """Display all Pokemon from the collection """
         if not self.collection:
-            print(f"{self.name} has no pokemon")
-            return
+            print(f"{self.name} has no pokemon to remove.")
+            return None
         
-        print(f"\n{self.name}'s Pokemon Collection")
+        print(f"\n{self.name}'s Pokemon Collection ({len(self.collection)} total)")
         for i, pokemon in enumerate(self.collection):
-            print(f"{i + 1}. {pokemon.name} (ID: {pokemon.id} - {pokemon.type} type")
+            print(f"{i + 1}. {pokemon.name} (ID: {pokemon.id} - {pokemon.type} type)")
 
 # Test the Player class
 # def test_player_class():

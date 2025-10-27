@@ -30,8 +30,8 @@ class PokemonGame:
 
         print("\nChoose your starter Pokemon:")
         print("1. Bulbasaur (Grass Type)")
-        print("1. Charmander (Fire Type)")
-        print("1. Mudkip (Water Type)")
+        print("2. Charmander (Fire Type)")
+        print("3. Mudkip (Water Type)")
 
         while True:
             choice = input("Enter 1, 2, or 3: ")
@@ -52,6 +52,9 @@ class PokemonGame:
     def show_main_menu(self):
         print(f"\n=== Pokemon Adventure - {self.player.name} ===")
         print("1. Go Hunting (find wild Pokemon)")
+        print("2. Show Collection")
+        print("3. Remove Pokemon from collection")
+        print("4. Quit Game")
 
     def main_game_loop(self):
         while True:
@@ -66,23 +69,26 @@ class PokemonGame:
                 self.remove_pokemon_menu()
             elif choice == '4':
                 print(f"Thanks for playing, {self.player.name}! Goodbye")
+                break
 
     def go_hunting(self):
-        random_id = random.random(1-151)
-        wild_pokemon = get_pokemon_data(random_id)
-        self.wild_pokemon = wild_pokemon
+        random_id = random.randint(1, 151)
+        data = get_pokemon_data(random_id)
+        self.wild_pokemon = Pokemon(**data)
 
-        print(f"A wild {wild_pokemon.name} appeared!")
-        print(wild_pokemon)
-        choice = int(input("""
+        print(f"A wild {self.wild_pokemon.name} appeared!")
+        print(f"HP: {self.wild_pokemon.hp}")
+        print(f"Attack: {self.wild_pokemon.attack}")
+        print(f"Type: {self.wild_pokemon.type.title()}")
+        choice = input("""
                     1. Try to catch
                     2. Flee
-                    """))
+                    """)
         if choice == '1':
-            self.try_catch_pokemon(self.wild_pokemon)
+            self.try_catch_pokemon(data)
         elif choice == '2':
-            self.wild_pokemon = None
             print("Ran away")         
+            self.wild_pokemon = None
         else:
             print("Invalid option, please enter 1 or 2")
 
@@ -104,18 +110,19 @@ class PokemonGame:
         # Use input() to get user choice and convert to integer
         # Call try_catch_pokemon() or handle fleeing based on user input
 
-    def try_catch_pokemon(self, wild_pokemon):
+    def try_catch_pokemon(self, pokemon):
         catch_rate = 0.25
-        random_num = random.random(0-1)
+        roll = random.random()
         print("You throw a Pokeball...")
-        print(f"Catch rate: {random_num:.0%}")
-        if random_num >= catch_rate:
-            print(f"Gotcha! {self.wild_pokemon.name} was caught!")
-            self.player.add_pokemon(wild_pokemon)
-            print(f"{self.wild_pokemon.name} added to {self.player.name}'s collection!")
+        print(f"Catch rate: {catch_rate * 100:.0f}% (rolled {roll * 100:.1f}%)")
+
+        if roll <= catch_rate:
+            print(f"Gotcha! {pokemon['name']} was caught!")
+            new_pokemon = Pokemon(**pokemon)
+            self.player.add_pokemon(new_pokemon)
             self.wild_pokemon = None
         else:
-            print(f"{self.wild_pokemon.name} broke out of the Pokeball!")
+            print(f"{pokemon['name']} broke out of the Pokeball! It ran away!")
 
         # 1. Calculate catch probability (base rate: 50%)
         # 2. Generate random number (0-1)
@@ -135,9 +142,10 @@ class PokemonGame:
 
     def remove_pokemon_menu(self):
         self.player.show_collection()
-        choice = int(input("Which Pokemon would you like to remove? Choose 1-6"))
+
+        choice = int(input("Which Pokemon would you like to remove? Choose 1-6: "))
         remove = choice - 1
-        if remove <= len(Player.collection):
+        if 0 <= remove <= len(self.player.collection):
             self.player.remove_pokemon(remove)
         else:
             print("Enter a valid number 1-6")
@@ -155,7 +163,7 @@ class PokemonGame:
         # Handle invalid input (non-numbers, out-of-range numbers)
 
 def create_game():
-    game = PokemonGame
+    game = PokemonGame()
     game.start_game()
     game.main_game_loop()
 
